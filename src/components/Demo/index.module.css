@@ -1,0 +1,11 @@
+/* style 文件名加上.module前缀，可以使样式模块化 */
+
+.hello {
+    background-color: red;
+}
+.title {
+    font-size: 30px;
+}
+.text {
+    background-color: #ccc;
+}
