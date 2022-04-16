@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>类的基本知识</title>
+</head>
+<body>
+    <script>
+        /**
+         * 总结：
+         *      1、类中的constrcutor构造器方法不是必须写的，要对实例进行一些初始化的操作，如添加属性才需要调用
+         *      2、如果A类继承了B类，且A类中写了constrcutor构造器方法，那么A类构造器中必须调用super()方法，调用super方法相当于就是调用继承类的constrcutor方法
+         *      3、类中写的方法，都是挂载在类的原型上，供类的实例去使用
+         **/
+        class Person {
+            // 构造器方法
+            constructor(name, age){
+                // 构造器中的 this 指向谁 --- 指向类的实例对象
+                console.log(this);
+                // Person{age: 18, name: '小明 '}
+                this.name = name;
+                this.age = age;
+            }
+            // 一般的方法，挂载在类的原型对象上，供实例使用
+            speak(){
+                console.log(this); // 通过Person实例调用speak方法时，speak中的this谁调用就指向谁
+                console.log(`我的名字是${this.name}, 我今年${this.age}`);
+            }
+        }
+        class Student extends Person {
+            constructor(name, age, grade){
+                super(name, age); // 必须调用super，相当于就是调用一下父类的constrcutor
+                this.grade = grade;
+            }
+            // 一般方法挂载在类的原型对象上
+            speak(){ // 当Student实例对象调用 speak方法时，会在自身的原型上查找，有就直接调用，没有会往原型的__propto__上查找，直到找到null
+                console.log(`我的名字是${this.name}, 我今年${this.age}, 我上${this.grade}年级了！`);
+            }
+        }
+        const p1 = new Person('小明', 18);
+        console.log("🚀 ~ file: class-study.html ~ line 21 ~ p1", p1);
+        p1.speak();
+        const s1 = new Student('小红', 17, '高三');
+        s1.speak();
+    </script>
+</body>
+</html>

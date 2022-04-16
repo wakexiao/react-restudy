@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react demo</title>
+</head>
+<body>
+    <div id="app"></div>
+    <!-- 引入react核心代码库 -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <!-- 引入react-dom，用于支持react 操作 DOM -->
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <!-- 引入babel,用于将JSX代码转译成js -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- 需要把script标签的type类型改成 text/babel, 表示该script标签里的代码写的是jsx代码并且使用babel转译 -->
+    <script type="text/babel">
+        // 使用babel 不适用于生产环境,浏览器控制台会有提示，因为如果在生产环境是在浏览器运行时去转义，会使网页白屏时间较长
+        // react 绑定的方法需要是一个方法，否者会立即执行
+        const data = ['吃饭', '睡觉', '打豆豆'];
+        const VDOM = (<div className="div">
+                    {
+                        (function test(){
+                            console.log(123);
+                        })()
+                    }
+                    <div>react会自动将数组遍历渲染到页面上</div>
+                    <div>text:{data}</div>
+                    <div>无需列表</div>
+                    <ul>
+                    { // 通过 map 循环处理数据，包裹一层 li
+                        data.map((item, index) => <li key={index}>{item}</li>)
+                    }
+                    </ul>
+                    <h1 className="h1" onClick={alert('hello react h1')}>hello react</h1> 
+                    <button className="button" onClick={() => {alert('hello react button')}}>hello react</button>
+                </div>);
+        const domContainer = document.querySelector('#app');
+        ReactDOM.render(VDOM, domContainer);
+        console.log(VDOM);
+        console.log(typeof VDOM);
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+    let arr = [1, 5,7,56,4,32]
+
+    function fn(arr){
+      if(arr.length == 0) return arr
+      let left = []
+      let right = []
+      let center = arr[arr.length - 1]
+      for (let i = 0; i < arr.length - 1; i++){ 
+        const item = arr[i]
+        if(item <= center){
+          left.push(item)
+        }else{
+          right.push(item)
+        }
+      }
+      return [...fn(left),center,...fn(right)]
+    }
+    console.log(fn(arr));
+    </script>
+  </body>
+</html>

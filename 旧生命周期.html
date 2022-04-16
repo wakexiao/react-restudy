@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react class component</title>
+</head>
+<body>
+    <div id="app"></div>
+    <!-- 引入react核心代码库 -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <!-- 引入react-dom，用于支持react 操作 DOM -->
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <!-- 引入babel,用于将JSX代码转译成js -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- 需要把script标签的type类型改成 text/babel, 表示该script标签里的代码写的是jsx代码并且使用babel转译 -->
+    <script src="https://unpkg.com/moment@2.29.1/min/moment.min.js" ></script>
+    <!-- unpkg的使用方式，https://unpkg.com/packageNmae 默认重定向到最新版本的包，加上/ 访问可以查看unpkg地址上的文件目录 -->
+    <script type="text/babel">
+        class Count extends React.Component {
+            constructor(props){
+                console.log('Count --------- constructor');
+                super(props);
+                this.state = {count: 0};
+            }
+            add = () => {
+                // 不能这样写，setState 接收一个函数。这个函数接受一个当前的state状态，和将要更新的props，函数返回的对象就是state更新的东西
+                // this.setState((state, props)=> {
+                //     console.log(props)
+                //     const {count} = state;
+                //     this.setState({
+                //         count: count + 1
+                //     })
+                // })
+                this.setState((state, props) => { // 当前的 state 和 props
+                    console.log(state, props);
+                    const {count} = this.state;
+                    return {
+                        count: count + 1
+                    };
+                })
+            }
+            updateTime = () => {
+                this.forceUpdate(); // 强制更新，组件的state或props没改变想要更新时可以用这个方法
+            }
+            componentWillMount(){
+                console.log('Count --------- componentWillMount')
+            }
+            componentDidMount(){
+                console.log('Count --------- componentDidMount')
+            }
+            componentWillReceiveProps(nextProps, context){// 第二个参数官网也没解释，暂时叫他context
+                console.log('Count --------- componentWillReceiveProps')
+                // console.log('componentWillReceiveProps', arguments)
+            }
+            shouldComponentUpdate(nextProps, nextState){
+                console.log('Count --------- shouldComponentUpdate')
+                if(nextState.count !== this.state.count){
+                    return true
+                }
+                return false
+            }
+            componentWillUpdate(newProps, newState, context){
+                console.log('Count --------- componentWillUpdate')
+            }
+            componentDidUpdate(prevProps, prevState, snapshot){
+                console.log('Count --------- componentDidUpdate')
+            }
+            omponentWillUnmount(){
+                console.log('Count --------- componentWillUnmount')
+                clearInterval(this.timer)
+            }
+            render(){
+                console.log('Count --------- render');
+                const {count} = this.state;
+                const {time} = this.props;
+                return (
+                    <div>
+                        点击次数：{count} 
+                        <br />
+                        <button onClick={this.add}>点击+1</button>
+                        <p></p>
+                        进入页面的时间： {moment(time).format('YYYY 年 MM 月 DD 日 hh:mm:ss')}
+                        <p></p>
+                        <button onClick={this.updateTime}>点击强制更新</button>
+                    </div>
+                )
+            }
+        }
+
+        class App extends React.Component {
+            constructor(props){
+                console.log('App --------- constructor');
+                super(props);
+                this.state = {time: new Date().getTime()};
+            }
+            componentWillMount(){ // 没有参数
+                console.log('App --------- componentWillMount')
+            }
+            componentDidMount(){ // 没有参数
+                console.log('App --------- componentDidMount');
+                this.timer = setInterval(() => {
+                    this.setState((state, props) => {
+                        return {
+                            time: new Date().getTime()
+                        }
+                    })
+                }, 1000)
+            }
+            /**
+             * 这个生命周期如果不写，react会默认写一个返回为true的方法
+             **/
+            shouldComponentUpdate(nextProps, nextState, context){ // 第三个参数官网也没解释，暂时叫他context
+                console.log('App --------- shouldComponentUpdate')
+                // console.log('componentDidUpdate', nextProps, nextState, context)
+                return true // 如果返回false， componentWillUpdate 生命周期也不会执行
+            }
+            componentWillUpdate(newProps, newState, context){ // 第三个参数官网也没解释，暂时叫他context
+                console.log('App --------- componentWillUpdate')
+            }
+            componentDidUpdate(prevProps, prevState, snapshot){
+                // 如果组件实现了 getSnapshotBeforeUpdate() 生命周期（不常用），则它的返回值将作为 componentDidUpdate() 的第三个参数 “snapshot” 参数传递。否则此参数将为 undefined
+                console.log('App --------- componentDidUpdate')
+                // console.log('componentDidUpdate', prevProps, prevState, snapshot)
+            }
+            componentWillUnmount(){
+                console.log('App --------- componentWillUnmount')
+                clearInterval(this.timer)
+            }
+            destroy = () => {
+                ReactDOM.unmountComponentAtNode(document.getElementById('app'));
+            }
+            render(){
+                console.log('App --------- render');
+                const style = {color: 'red'};
+                const {time} = this.state;
+                return (
+                    <div>
+                        <button onClick={this.destroy}>点击销毁</button>
+                        <p />
+                        现在是北京时间：
+                        <span style={style}>{moment(time).format('YYYY 年 MM 月 DD 日 hh:mm:ss')}</span>
+                        <p />
+                        
+                        <Count time={time} />
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(<App />, document.getElementById('app'))
+        /**
+         * 执行了ReactDOM.render(<MyComponent />, document.getElementById('app')) 发生了什么？
+         *      1、React 解析组件标签，找到了MyComponent 组件。
+         *      2、发现组件是使用类定义的，随后new出来该类的实例，并通过该实例调用原型上的render方法。
+         *      3、将render方法返回的虚拟DOM转为真实的DOM，然后在渲染到页面上
+         **/
+
+         /**
+          * 组件生命周期执行顺序：
+          *     挂载阶段： 
+          *         constructor -> componentWillMount -> render -> componentDidMount
+          *         父组件 constructor -> componentWillMount -> render -> 子组件 constructor -> componentWillMount -> render -> componentDidMount -> 父组件 componentDidMount
+          *     更新阶段： 
+          *         三种更新的情况： 父组件 render、setState、 forceUpdate
+          *         父组件render，子组件从 componentWillRecevieProps 开始
+          *         setState 组件从 shouldComponentUpdate 开始
+          *         forceUpdate 组件从 componentWillUpdate 开始
+          *         componentWillRecevieProps -> shouldComponentUpdate -> componentWillUpdate -> render -> componentDidUpdate
+          *         父组件 shouldComponentUpdate -> componentWillUpdate -> render -> 
+          *             子组件 componentWillReceiveProps -> shouldComponentUpdate -> componentWillUpdate ->  render -> componentDidUpdate
+          *         父组件 componentDidUpdate
+          *     销毁：
+          *         父组件 componentWillUnmount
+          *     
+          **/
+    </script>
+</body>
+</html>

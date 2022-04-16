@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react function component</title>
+</head>
+<body>
+    <div id="app"></div>
+    <!-- 引入react核心代码库 -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <!-- 引入react-dom，用于支持react 操作 DOM -->
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <!-- 引入babel,用于将JSX代码转译成js -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- 需要把script标签的type类型改成 text/babel, 表示该script标签里的代码写的是jsx代码并且使用babel转译 -->
+    <script type="text/babel">
+        function Demo(){ // 组件首字母需要大写
+            console.log(this);// 这里的this是undefined,因为babel编译后开启了严格模式
+            return <h1>我是函数式组件</h1>
+        }
+        ReactDOM.render(<Demo />, document.getElementById('app'))
+        /**
+         * 执行了ReactDOM.render(<Demo />, document.getElementById('app')) 发生了什么？
+         *      1、React 解析组件标签，找到了Demo 组件。
+         *      2、发现组件是使用函数定义的，随后调用该函数，将返回的虚拟DOM转为真是的DOM，随后渲染在页面上
+         **/
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react class component</title>
+</head>
+<body>
+    <div id="app"></div>
+    <!-- 引入react核心代码库 -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <!-- 引入react-dom，用于支持react 操作 DOM -->
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <!-- 引入babel,用于将JSX代码转译成js -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- 需要把script标签的type类型改成 text/babel, 表示该script标签里的代码写的是jsx代码并且使用babel转译 -->
+    <script type="text/babel">
+        class MyComponent extends React.Component {
+            constructor(props){ // 写了 constructor 就必须接受props并且调用super方法传递下去，如果不接受或者接收在super方法中不传，在constructor中打印this.props就是undefined
+                super(props); // 构造器中是否接受props，取决于事发后希望在constructor中通过this.props获取到props，这种情况比较少
+                this.handClick = this.handClick.bind(this); //把 handClick 绑定this指向挂载在类的实例对象上
+            }
+            state = {
+                name: '',
+                num: 0,
+            };
+            handClick(){// 在MyComponent 类原型上
+                // 类中的方法默认开启了局部严格默认，所以this是undefined，非严格模式的话就是window
+                console.log(this); // 这里的 this 指向 undefined
+            }
+            handleBtnClick = () =>{
+              // for(let i=0; i< 5; i++) {
+              //   console.log(this.state.num)
+              //   this.setState({num: this.state.num ++})
+              //   console.log('seted', this.state.num)
+              // }
+              // 不能用 this.state.num ++ ，这是对自身的加
+              this.setState({num: this.state.num + 1})
+              console.log(this.state.num)
+            }
+            onChange = (name, test, e) => {
+                console.log(e)
+                console.log(test)
+                this.setState({
+                    [name]: e.target.value
+                })
+            }
+            render(){ // render方法挂载在 MyComponent 的原型对象上，供实例使用。
+                console.log(this.props) // 如果写了 constrcutor 没有调用 super，使用this会报错
+                const props = {name: 'a', id: 'b'}
+                console.log(this);// 这里的this指向谁？ 指向 MyComponent 的实例对象 || MyComponent 组件实例对象
+                // handClick 方法是 onClick 事件的回调，所以不是通过实例调用的，是直接调用。this会有问题
+                return (
+                    <div>
+                        <h1 {...props} onClick={this.handClick}>我是类组件</h1>
+                        绑定onChange方法，使用.bind方法传参，react会自动在最后一个参数传入事件对象
+                        <br />
+                        <input type="text" value={this.state.name} name="name" onChange={this.onChange.bind(this, 'name', 'test')} />
+                        <div>{ this.state.num }</div>
+                        <button onClick={this.handleBtnClick}>click</button>
+                    </div>
+                )
+            }
+        }
+        // 组件props 类型校验， 16版本使用 import PropTypes from 'prop-types';
+        // react 15 版本 React 身上才有 PropTypes，16 版本之后就抽出去了
+        // 相当于给MyComponent类上加了一个静态 propTypes属性，也可以在类里使用 static propTypes = {}
+        // MyComponent.propTypes = { 
+        //     name: React.PropTypes.string.isRequired, // 必传
+        //      age: React.PropTypes.number // 非必传
+        // }
+        // 组件props默认值
+        MyComponent.defaultProps = {
+            age: 18
+        }
+        ReactDOM.render(<MyComponent />, document.getElementById('app'))
+        /**
+         * 执行了ReactDOM.render(<MyComponent />, document.getElementById('app')) 发生了什么？
+         *      1、React 解析组件标签，找到了MyComponent 组件。
+         *      2、发现组件是使用类定义的，随后new出来该类的实例，并通过该实例调用原型上的render方法。
+         *      3、将render方法返回的虚拟DOM转为真实的DOM，然后在渲染到页面上
+         **/
+    </script>
+</body>
+</html>

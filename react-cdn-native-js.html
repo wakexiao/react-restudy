@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react demo</title>
+</head>
+<body>
+    <div id="app"></div>
+    <!-- 引入react核心代码库 -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <!-- 引入react-dom，用于支持react 操作 DOM -->
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script>
+        const e = React.createElement; // react 的 createElement 方法接收三个参数，第一个参数，标签名，第二个标签属性，第三个标签里的内容
+        class HelloReact extends React.Component {
+            constructor(props){
+                super(props);
+                this.state = {
+                    liked: false
+                }
+            }
+            render() {
+                if(this.state.liked){
+                    // return <h1>You liked this.</h1> // 不能使用JSX,要用bable转移
+                   return e('h1', {className: 'h1'}, e('span', {className: 'span'}, 'You liked this.'))
+                }
+                // return (
+                //     <button onClick={() => this.setState({liked: true})}>
+                //         like
+                //     </button>
+                // )
+                // 第三个参数等于在第二个参数里传children参数，第三个参数的优先级较高
+                return e('h1',{ className: 'h1' }, e('button', { className: 'button', onClick: () => this.setState({liked: true}), children: 'like this'}, 'like'));
+            }
+        };
+        
+        const domContainer = document.querySelector('#app');
+        ReactDOM.render(e(HelloReact), domContainer);
+    </script>
+</body>
+</html>
